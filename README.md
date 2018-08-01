@@ -3,7 +3,7 @@
 This project uses Unity3D to generate real world locations using OpenStreetMap data.
 
 1. Import OpenStreetMap file.
-  Go to https://www.openstreetmap.org/export. Manually select a section and export it. Convert the OSM-File to a .TXT file and import it     into Unity3D.
+  Go to https://www.openstreetmap.org/export. Manually select a section and export it. Convert the OSM-File to a .TXT file and import it     into your Unity3D Resources folder.
   
 2. Prepare the scene in Unity
   Create a surface for the scene to be placed upon. Place the surface below the origin (in negativ y direction) as all the objects are 
