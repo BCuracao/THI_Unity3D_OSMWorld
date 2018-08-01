@@ -19,17 +19,17 @@ internal abstract class InfrastructureManager
         xmlBaseFactory = map;
     }
 
-    // Calculates the center of a way
-    protected Vector3 GetCenter(WaysFactory waysFactory)
-    {
-        Vector3 sum = Vector3.zero;
+    //// Calculates the center of a way
+    //protected Vector3 GetCenter(WaysFactory waysFactory)
+    //{
+    //    Vector3 sum = Vector3.zero;
 
-        foreach (var w in waysFactory.ndref)
-        {
-            sum += xmlBaseFactory.allNodes[w];
-        }
+    //    foreach (var w in waysFactory.ndref)
+    //    {
+    //        sum += xmlBaseFactory.allNodes[w];
+    //    }
 
-        return sum / waysFactory.ndref.Count;
-    }
+    //    return sum / waysFactory.ndref.Count;
+    //}
 
 }

@@ -72,7 +72,7 @@ public class WaysFactory : AttributeFactory
         height = 14f;
 
         // Default name if no name available
-        name = "Musterstr.";
+        name = "noData";
 
         // Get all nd ref sub-nodes
         XmlNodeList nd = xmlNode.SelectNodes("nd");
