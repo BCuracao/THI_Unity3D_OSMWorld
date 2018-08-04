@@ -93,7 +93,7 @@ public class WaysFactory : AttributeFactory
             }
             else if (k == "height")
             {
-                height = GetAttributes<float>("v", n.Attributes);
+                height = GetWayAttributes<float>("v", n.Attributes);
             }
             //if (k == "building:levels")
             //{
