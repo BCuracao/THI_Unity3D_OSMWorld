@@ -26,10 +26,16 @@ This project uses Unity3D to generate real world locations using OpenStreetMap d
   This error can be ignore for now. Unity wants us to use a shared Mesh for all objects in the scene which would lead to a single 
   GameObject for the entire generated result. Making it impossible to edit the meshes individually.
 
-  Due to possible inconsistent data in the OSM file some regions may not load throwing a FormatException: Unknown char. This happens    
-  because of faulty attributes in the OSM file. It is an ongoing process to improve the code to handle all possible errors.
+  Due to possible inconsistent data in the OSM file some regions may not load throwing a FormatException: Unknown char. This happens because of faulty attributes in the OSM file. It is an ongoing process to improve the code to handle all possible errors.
   
   If you use an actual heightmap the generated scene is not properly placed on top of it. Implementing it in a way that i.e. the roads 
   follow the course of the terrain properly is a huge task to tackle.
    
+6. Project Hierarchy
+  Roads and rooftops are hidden in the project hierarchy and thus unclickable to make the hierarchy clearer.
+  In order to re-enable the roads in the hierarchy, remove the comments in line 297 in the RoadFactory class. Line 69 in the RoofFactory
+  class.
+  
+        /* Hide Road objects in the project hierarchy to make it more readable */
+        go.hideFlags = HideFlags.HideInHierarchy;
    
