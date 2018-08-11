@@ -32,4 +32,11 @@ This project uses Unity3D to generate real world locations using OpenStreetMap d
   If you use an actual heightmap the generated scene is not properly placed on top of it. Implementing it in a way that i.e. the roads 
   follow the course of the terrain properly is a huge task to tackle.
    
+6. Project Hierarchy
+  Roads and rooftops are hidden in the project hierarchy and thus unclickable to make the hierarchy clearer.
+  In order to re-enable the roads in the hierarchy, remove the comments in line 297 in the RoadFactory class. Line 69 in the RoofFactory
+  class.
+  
+        /* Hide Road objects in the project hierarchy to make it more readable */
+        go.hideFlags = HideFlags.HideInHierarchy;
    
