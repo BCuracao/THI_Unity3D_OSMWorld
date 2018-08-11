@@ -65,7 +65,7 @@ public class WaysFactory : AttributeFactory
     public WaysFactory(XmlNode xmlNode)
     {
         id = GetAttributes<ulong>("id", xmlNode.Attributes);
-        isVisible = GetAttributes<bool>("visible", xmlNode.Attributes);
+        //isVisible = GetAttributes<bool>("visible", xmlNode.Attributes);
         ndref = new List<ulong>();
 
         // Default height if no height available

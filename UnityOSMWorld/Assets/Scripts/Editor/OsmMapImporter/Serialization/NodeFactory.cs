@@ -49,7 +49,7 @@ public class NodeFactory : AttributeFactory
     public NodeFactory(XmlNode node)
     {
         id = GetAttributes<ulong>("id", node.Attributes);
-        visible = GetAttributes<bool>("visible", node.Attributes);
+        // visible = GetAttributes<bool>("visible", node.Attributes);
         lat = GetAttributes<float>("lat", node.Attributes);
         lon = GetAttributes<float>("lon", node.Attributes);
 

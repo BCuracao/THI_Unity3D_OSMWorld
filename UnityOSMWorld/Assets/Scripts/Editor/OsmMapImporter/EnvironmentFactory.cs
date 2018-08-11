@@ -15,6 +15,11 @@ internal class EnvironmentFactory : InfrastructureManager
     private Material waterMat;
 
     /// <summary>
+    /// Green area material to set in import window
+    /// </summary>
+    private Material greenMat;
+
+    /// <summary>
     /// River width to set in import window
     /// </summary>
     private float riverWid;
@@ -31,9 +36,10 @@ internal class EnvironmentFactory : InfrastructureManager
     /// <param name="waterWay">Waterway material</param>
     /// <param name="riverWidth">Width of river</param>
     /// <param name="steamWidth">Width of Stream</param>
-    public EnvironmentFactory(XmlBaseFactory xmlBaseFactory, Material waterWay, float riverWidth, float steamWidth) : base(xmlBaseFactory)
+    public EnvironmentFactory(XmlBaseFactory xmlBaseFactory, Material waterWay, Material greenMaterial, float riverWidth, float steamWidth) : base(xmlBaseFactory)
     {
         waterMat = waterWay;
+        greenMat = greenMaterial;
         riverWid = riverWidth;
         streamWid = steamWidth;
         CreaterWaterway();
@@ -375,6 +381,79 @@ internal class EnvironmentFactory : InfrastructureManager
 
     }
 
+    private void MakeGreen(List<WaysFactory> list)
+    {
+        foreach (WaysFactory green in list)
+        {
+
+            GameObject go = new GameObject();
+            MeshFilter mf = go.AddComponent<MeshFilter>();
+            MeshRenderer mr = go.AddComponent<MeshRenderer>();
+
+            go.AddComponent<MeshCollider>();
+
+            mr.material = greenMat;
+            go.name = "Green area";
+
+            RaycastHit hit;
+
+            // Sum gives us the center point of all way nodes
+            Vector3 nodeOrigin = xmlBaseFactory.GetOrigin(green);
+
+            // Gets the gameobjects position to place it at the right sport after raycast hit an object
+            Vector3 goPosition = nodeOrigin - xmlBaseFactory.boundsFactory.center;
+
+            // Places the gameobject in the middle of the bounds relativ to its local position(nodeOrigin)
+            go.transform.position = nodeOrigin - goPosition;
+
+            List<Vector3> vertices = new List<Vector3>();
+            List<Vector3> normals = new List<Vector3>();
+            List<Vector2> uvs = new List<Vector2>();
+            List<int> triangles = new List<int>();
+            List<int> indices = new List<int>();
+
+            // Get all ids
+            for (int i = 1; i < green.ndref.Count - 1; i++)
+            {
+                NodeFactory node1 = xmlBaseFactory.allNodes[green.ndref[i - 1]];
+                NodeFactory node2 = xmlBaseFactory.allNodes[green.ndref[i]];
+
+
+                Vector3 v1 = node1 - nodeOrigin;
+                Vector3 v2 = node2 - nodeOrigin;
+
+                vertices.Add(v1);
+                vertices.Add(v2);
+
+                int p0 = vertices.Count - 2;
+                int p1 = vertices.Count - 1;
+
+                triangles.Add(0);
+                triangles.Add(p1);
+                triangles.Add(p0);
+
+                normals.Add(Vector3.up);
+                normals.Add(Vector3.up);
+
+                uvs.Add(new Vector2(1, 0));
+                uvs.Add(new Vector2(0, 1));
+
+
+                // Raycast downwards to transform the gameobjects onto terrain.
+                if (Physics.Raycast(goPosition, Vector3.down, out hit))
+                {
+                    //Debug.DrawLine(Vector3.down, hit.point, Color.red);
+                    go.transform.position = hit.point + new Vector3(0, 0.05f, 0);
+                    //go.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                }
+            }
+            mf.mesh.vertices = vertices.ToArray();
+            mf.mesh.normals = normals.ToArray();
+            mf.mesh.triangles = triangles.ToArray();
+            mf.mesh.uv = uvs.ToArray();
+        }
+    }
+
     public void CreaterWaterway()
     { 
         /* Enable this to generate rivers only */
@@ -382,6 +461,10 @@ internal class EnvironmentFactory : InfrastructureManager
 
         /* Enable this to generate streams only */
         StitchWays(xmlBaseFactory.allWayNodes.FindAll((s) => { return s.isStream && s.ndref.Count > 1; }));
+
+        /* Enable this to generate green areas */
+        MakeGreen(xmlBaseFactory.allWayNodes.FindAll((s) => { return s.isPark && s.ndref.Count > 1; }));
     }
+
 
 }

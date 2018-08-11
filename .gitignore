@@ -34,3 +34,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+UnityOSMWorld/Assets/Resources/audizentrum.txt
+UnityOSMWorld/Assets/Resources/audizentrum.txt.meta
+UnityOSMWorld/Assets/Resources/koenigsberg.txt
+UnityOSMWorld/Assets/Resources/koenigsberg.txt.meta

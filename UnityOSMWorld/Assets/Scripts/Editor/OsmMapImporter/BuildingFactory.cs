@@ -153,5 +153,10 @@ internal class BuildingFactory : InfrastructureManager
             mf.mesh.triangles = triangles.ToArray();
             mf.mesh.uv = uvs.ToArray();
         }
+        // Clear data
+        vertices.Clear();
+        normals.Clear();
+        uvs.Clear();
+        triangles.Clear();
     }
 }

@@ -66,7 +66,7 @@ internal class RoofFactory : InfrastructureManager
             //go.AddComponent<MeshCollider>();
 
             /* Hide Roof objects in the project hierarchy to make it more readable */
-            //go.hideFlags = HideFlags.HideInHierarchy;
+            go.hideFlags = HideFlags.HideInHierarchy;
 
             // Sum gives us the center point of all way nodes
             Vector3 nodeOrigin = xmlBaseFactory.GetOrigin(building);
@@ -154,5 +154,10 @@ internal class RoofFactory : InfrastructureManager
             }
 
         }
+        // Clear data
+        vertices.Clear();
+        normals.Clear();
+        uvs.Clear();
+        triangles.Clear();
     }
 }

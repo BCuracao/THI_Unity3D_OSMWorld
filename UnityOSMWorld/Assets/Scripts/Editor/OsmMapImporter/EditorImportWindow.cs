@@ -28,6 +28,7 @@ public class EditorImportWindow : EditorWindow
     private Material roofMaterial;
     private Material buildingMaterial;
     private Material waterMaterial;
+    private Material greenMaterial;
 
     /// <summary>
     /// Values to set in the import window
@@ -61,7 +62,7 @@ public class EditorImportWindow : EditorWindow
         EditorGUI.EndDisabledGroup();
         if (GUILayout.Button("..."))
         {
-            var filePath = EditorUtility.OpenFilePanel("Select OpenMap File", Application.dataPath, "txt");
+            var filePath = EditorUtility.OpenFilePanel("Select OpenMap File", Application.dataPath, "xml");
             if (filePath.Length > 0)
             {
                 mapFilePath = filePath;
@@ -77,6 +78,7 @@ public class EditorImportWindow : EditorWindow
         buildingMaterial = EditorGUILayout.ObjectField("Building Material", buildingMaterial, typeof(Material), false) as Material;
         waterMaterial = EditorGUILayout.ObjectField("Waterway Material", waterMaterial, typeof(Material), false) as Material;
         roofMaterial = EditorGUILayout.ObjectField("Roof Material", roofMaterial, typeof(Material), false) as Material;
+        greenMaterial = EditorGUILayout.ObjectField("Green area Material", greenMaterial, typeof(Material), false) as Material;
         rooftopHeight = EditorGUILayout.FloatField("Rooftop Height", rooftopHeight);
         riverWitdh = EditorGUILayout.FloatField("River Width", riverWitdh);
         streamWidth = EditorGUILayout.FloatField("Stream Width", streamWidth);
@@ -87,7 +89,7 @@ public class EditorImportWindow : EditorWindow
         {
 
             var mapWrapper = new ImportMapWrapper(this, mapFilePath, roadMaterial, footwayMaterial, buildingMaterial,
-                                                        roofMaterial, waterMaterial, rooftopHeight, riverWitdh, streamWidth);
+                                                        waterMaterial, roofMaterial, greenMaterial, rooftopHeight, riverWitdh, streamWidth);
 
             mapWrapper.Import();
         }

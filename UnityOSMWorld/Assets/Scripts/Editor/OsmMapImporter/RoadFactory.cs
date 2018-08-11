@@ -72,21 +72,22 @@ internal class RoadFactory : InfrastructureManager {
 		public ulong id;
 		public Vector3 position;
 		public bool footway;
+		public string name;
 
 	}
 
-    /// <summary>
-    /// Nested Class to check the IDs of all WaysFactory objects in the original list to see if they have matchin IDs.
-    /// If they have matching IDs it combines the two seperate sections thats belong to the same street to one object.
-    /// </summary>
-    class Street {
+	/// <summary>
+	/// Nested Class to check the IDs of all WaysFactory objects in the original list to see if they have matchin IDs.
+	/// If they have matching IDs it combines the two seperate sections thats belong to the same street to one object.
+	/// </summary>
+	class Street {
 
-        // List of current nodes in the street
-        public List<StreetNode> nodes = new List<StreetNode>();
+		// List of current nodes in the street
+		public List<StreetNode> nodes = new List<StreetNode>();
 		public bool looped = false;
 
-        // Function to stitch the street to the current list of nodes
-        public bool Stitch(XmlBaseFactory xmlBaseFactory, WaysFactory street) {
+		// Function to stitch the street to the current list of nodes
+		public bool Stitch(XmlBaseFactory xmlBaseFactory, WaysFactory street) {
 
 			// Create list to append
 			List<StreetNode> append = new List<StreetNode>();
@@ -95,38 +96,39 @@ internal class RoadFactory : InfrastructureManager {
 				node.id = street.ndref[i];
 				node.position = xmlBaseFactory.allNodes[node.id] - xmlBaseFactory.boundsFactory.center;
 				node.footway = street.isFootway;
+				node.name = street.name;
 				append.Add(node);
 			}
 
 			// Atemmpt to stitch append list to current list of nodes
 
-            // If street is empty
+			// If street is empty
 			if (nodes.Count == 0) {
 				nodes = append;
 			}
-            // if the first node in the street is the same as the first node in the street we're trying to stich
-            else if (nodes[0].id == append[0].id) {
+			// if the first node in the street is the same as the first node in the street we're trying to stich
+			else if (nodes[0].id == append[0].id) {
 				nodes.Reverse();
 				nodes.AddRange(append);
 			}
-            // if the first node in the street is the same as the last node in the street we're trying to stitch
-            else if (nodes[0].id == append[append.Count - 1].id) {
+			// if the first node in the street is the same as the last node in the street we're trying to stitch
+			else if (nodes[0].id == append[append.Count - 1].id) {
 				append.AddRange(nodes);
 				nodes = append;
 			}
-            // if the last node in the street is the same as the first node in the street we're trying to stitch
-            else if (nodes[nodes.Count - 1].id == append[0].id) {
+			// if the last node in the street is the same as the first node in the street we're trying to stitch
+			else if (nodes[nodes.Count - 1].id == append[0].id) {
 				nodes.AddRange(append);
 			}
-            // if the last node in the street is the same as the last node in the street we're trying to stitch
-            else if (nodes[nodes.Count - 1].id == append[append.Count - 1].id) {
+			// if the last node in the street is the same as the last node in the street we're trying to stitch
+			else if (nodes[nodes.Count - 1].id == append[append.Count - 1].id) {
 				append.Reverse();
 				nodes.AddRange(append);
 			} else {
 				return false;
 			}
 
-            // Cleanup data
+			// Cleanup data
 			// Remove duplicate ids
 			List<StreetNode> copy = new List<StreetNode>();
 			for (int i = 0; i < nodes.Count; i++) {
@@ -152,13 +154,15 @@ internal class RoadFactory : InfrastructureManager {
 			return true;
 		}
 
-        // Once the street has been fully stitched together and we've checked no other street can be added
-        // we pass it to the CreateStreet function
+		// Once the street has been fully stitched together and we've checked no other street can be added
+		// we pass it to the CreateStreet function
 
 	}
 
-	private void CreateStreet(Street street, string name) {
-		
+	private void CreateStreet(Street street) {
+
+		string name = street.nodes[0].name;
+
 		List<Vector3> vertices = new List<Vector3>();
 		List<Vector3> normals = new List<Vector3>();
 		List<Vector2> uvs = new List<Vector2>();
@@ -261,43 +265,62 @@ internal class RoadFactory : InfrastructureManager {
 				triangles0.Add(p3);
 			}
 
-		}
+			if (street.nodes[i].name != name || i >= street.nodes.Count - 1) {
 
-		// Find mesh center and move vertices
-		Vector3 center = Vector3.zero;
-		foreach (Vector3 v in vertices) center += v;
-		center /= vertices.Count;
-		for (int i = 0; i < vertices.Count; i++) vertices[i] -= center;
+				// Find mesh center and move vertices
+				Vector3 center = Vector3.zero;
+				foreach (Vector3 v in vertices) center += v;
+				center /= vertices.Count;
 
-		// Create object
-		GameObject go = new GameObject(name);
-		MeshFilter mf = go.AddComponent<MeshFilter>();
-		MeshRenderer mr = go.AddComponent<MeshRenderer>();
-		MeshCollider mc = go.AddComponent<MeshCollider>();
-		go.transform.position = center;
-		mf.mesh.vertices = vertices.ToArray();
-		mf.mesh.normals = normals.ToArray();
-		mf.mesh.uv = uvs.ToArray();
+				// Move vertices ontop of terrain
+				for (int j = 0; j < vertices.Count; j++) {
+					RaycastHit hit;
+					if (Physics.Raycast(new Vector3(vertices[j].x, vertices[j].y + 200f, vertices[j].z), Vector3.down, out hit)) {
+						vertices[j] = new Vector3(vertices[j].x, hit.point.y + 0.05f, vertices[j].z);
+					}
+				}
 
-		// Add triangles & materials
-		if (triangles0.Count == 0) {
-			mf.mesh.triangles = triangles1.ToArray();
-            mr.material = footway;
-		} else if (triangles1.Count == 0) {
-			mf.mesh.triangles = triangles0.ToArray();
-			mr.material = road;
-		} else {
-			mf.mesh.subMeshCount = 2;
-			mf.mesh.SetTriangles(triangles0.ToArray(), 0);
-			mf.mesh.SetTriangles(triangles1.ToArray(), 1);
+				// Move vertices based on center
+				for (int j = 0; j < vertices.Count; j++) vertices[j] -= center;
+				
+				// Create object
+				GameObject go = new GameObject(name);
+				MeshFilter mf = go.AddComponent<MeshFilter>();
+				MeshRenderer mr = go.AddComponent<MeshRenderer>();
+				MeshCollider mc = go.AddComponent<MeshCollider>();
+				go.transform.position = center;
+				mf.mesh.vertices = vertices.ToArray();
+				mf.mesh.normals = normals.ToArray();
+				mf.mesh.uv = uvs.ToArray();
 
-			mr.materials = new Material[] { road, footway};
-		}
+                /* Hide Road objects in the project hierarchy to make it more readable */
+                go.hideFlags = HideFlags.HideInHierarchy;
 
-		// Move objects ontop of terrain
-		RaycastHit hit;
-		if (Physics.Raycast(go.transform.position, Vector3.down, out hit)) {
-			go.transform.position = hit.point + new Vector3(0, 0.05f, 0);
+                // Add triangles & materials
+                if (triangles0.Count == 0) {
+					mf.mesh.triangles = triangles1.ToArray();
+					mr.material = footway;
+				} else if (triangles1.Count == 0) {
+					mf.mesh.triangles = triangles0.ToArray();
+					mr.material = road;
+				} else {
+					mf.mesh.subMeshCount = 2;
+					mf.mesh.SetTriangles(triangles0.ToArray(), 0);
+					mf.mesh.SetTriangles(triangles1.ToArray(), 1);
+					mr.materials = new Material[] { road, footway };
+				}
+
+				// Clear data
+				vertices.Clear();
+				normals.Clear();
+				uvs.Clear();
+				triangles0.Clear();
+				triangles1.Clear();
+				
+				name = street.nodes[i].name;
+
+			}
+
 		}
 
     }
@@ -308,16 +331,11 @@ internal class RoadFactory : InfrastructureManager {
     //This is necessary to combine street sections that belong to same street, but are split up in the XML
     private void StitchWays(List<WaysFactory> queue) {
 		while (queue.Count > 0) {
-            string name = "";
             Street street = new Street();
 			for (int i = queue.Count - 1; i >= 0; i--) {
                 // Get last object in the list
 				WaysFactory item = queue[i];
 				if (street.Stitch(xmlBaseFactory, item)) {
-					if (!name.Contains(item.name)) {
-						if (name.Length > 0) name += " ";
-						name += item.name;
-					}
                     // Remove street from list if stitched
                     queue.RemoveAt(i);
 					i = queue.Count - 1;
@@ -325,7 +343,7 @@ internal class RoadFactory : InfrastructureManager {
 			}
             // Check if the way contains at least 3 IDs to avoid misplaced items with no connections
 			if (street.nodes.Count > 2) {
-				CreateStreet(street, name);
+				CreateStreet(street);
 			}
 		}
 
