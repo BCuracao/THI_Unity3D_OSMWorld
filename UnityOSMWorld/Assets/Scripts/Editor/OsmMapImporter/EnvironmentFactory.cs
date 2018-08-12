@@ -418,7 +418,6 @@ internal class EnvironmentFactory : InfrastructureManager
                 NodeFactory node1 = xmlBaseFactory.allNodes[green.ndref[i - 1]];
                 NodeFactory node2 = xmlBaseFactory.allNodes[green.ndref[i]];
 
-
                 Vector3 v1 = node1 - nodeOrigin;
                 Vector3 v2 = node2 - nodeOrigin;
 
@@ -429,13 +428,17 @@ internal class EnvironmentFactory : InfrastructureManager
                 int p1 = vertices.Count - 1;
 
                 triangles.Add(0);
+                triangles.Add(p0);
+                triangles.Add(p1);
+
+                triangles.Add(0);
                 triangles.Add(p1);
                 triangles.Add(p0);
 
                 normals.Add(Vector3.up);
                 normals.Add(Vector3.up);
 
-                uvs.Add(new Vector2(1, 0));
+                uvs.Add(new Vector2(0, 0));
                 uvs.Add(new Vector2(0, 1));
 
 
@@ -443,7 +446,7 @@ internal class EnvironmentFactory : InfrastructureManager
                 if (Physics.Raycast(goPosition, Vector3.down, out hit))
                 {
                     //Debug.DrawLine(Vector3.down, hit.point, Color.red);
-                    go.transform.position = hit.point + new Vector3(0, 0.05f, 0);
+                    go.transform.position = hit.point + new Vector3(0, 0.035f, 0);
                     //go.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
                 }
             }
