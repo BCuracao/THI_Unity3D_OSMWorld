@@ -446,7 +446,7 @@ internal class EnvironmentFactory : InfrastructureManager
                 if (Physics.Raycast(goPosition, Vector3.down, out hit))
                 {
                     //Debug.DrawLine(Vector3.down, hit.point, Color.red);
-                    go.transform.position = hit.point + new Vector3(0, 0.035f, 0);
+                    go.transform.position = hit.point + new Vector3(0, 0.030f, 0);
                     //go.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
                 }
             }
