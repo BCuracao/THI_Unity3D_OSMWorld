@@ -30,10 +30,16 @@ internal class EnvironmentFactory : InfrastructureManager
     private float streamWid;
 
     /// <summary>
+    /// Parent GameObject
+    /// </summary>
+    GameObject parent = new GameObject();
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="xmlBaseFactory">Instance of XmlBaseFactory</param>
     /// <param name="waterWay">Waterway material</param>
+    /// <param name="greenmaterial"> Green area material</param>
     /// <param name="riverWidth">Width of river</param>
     /// <param name="steamWidth">Width of Stream</param>
     public EnvironmentFactory(XmlBaseFactory xmlBaseFactory, Material waterWay, Material greenMaterial, float riverWidth, float steamWidth) : base(xmlBaseFactory)
@@ -43,6 +49,7 @@ internal class EnvironmentFactory : InfrastructureManager
         riverWid = riverWidth;
         streamWid = steamWidth;
         CreaterWaterway();
+        parent.name = "Environment";
     }
 
     // Calculates the width of the road
@@ -192,7 +199,6 @@ internal class EnvironmentFactory : InfrastructureManager
     // Creates the waterways
     private void CreateWaterway(Street street, string name)
     {
-
         List<Vector3> vertices = new List<Vector3>();
         List<Vector3> normals = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
@@ -201,7 +207,6 @@ internal class EnvironmentFactory : InfrastructureManager
 
         for (int i = 1; i < street.nodes.Count; i++)
         {
-
             StreetNode s0;
             StreetNode s1 = street.nodes[i - 1];
             StreetNode s2 = street.nodes[i];
@@ -378,14 +383,12 @@ internal class EnvironmentFactory : InfrastructureManager
                 CreateWaterway(street, name);
             }
         }
-
     }
 
     private void MakeGreen(List<WaysFactory> list)
     {
         foreach (WaysFactory green in list)
         {
-
             GameObject go = new GameObject();
             MeshFilter mf = go.AddComponent<MeshFilter>();
             MeshRenderer mr = go.AddComponent<MeshRenderer>();
@@ -394,6 +397,9 @@ internal class EnvironmentFactory : InfrastructureManager
 
             mr.material = greenMat;
             go.name = "Green area";
+
+            // Set GameObject as child of parent object
+            go.transform.parent = parent.transform;
 
             RaycastHit hit;
 
@@ -410,7 +416,6 @@ internal class EnvironmentFactory : InfrastructureManager
             List<Vector3> normals = new List<Vector3>();
             List<Vector2> uvs = new List<Vector2>();
             List<int> triangles = new List<int>();
-            List<int> indices = new List<int>();
 
             // Get all ids
             for (int i = 1; i < green.ndref.Count - 1; i++)

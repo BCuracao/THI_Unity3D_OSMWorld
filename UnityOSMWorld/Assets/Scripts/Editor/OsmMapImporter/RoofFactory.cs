@@ -38,6 +38,11 @@ internal class RoofFactory : InfrastructureManager
     private List<int> triangles;
 
     /// <summary>
+    /// Parent GameObject
+    /// </summary>
+    GameObject parent = new GameObject();
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="xmlBaseFactory">Instance of XmlBaseFactory</param>
@@ -48,6 +53,7 @@ internal class RoofFactory : InfrastructureManager
         roofMat = roofMaterial;
         roofHeight = rooftopHeight;
         CreateRooftops();
+        parent.name = "Rooftops";
     }
 
     // Create rooftops
@@ -63,10 +69,13 @@ internal class RoofFactory : InfrastructureManager
             mr.material = roofMat;
 
             /* un-comment to enable colliders for the rooftops */
-            //go.AddComponent<MeshCollider>();
+            go.AddComponent<MeshCollider>();
 
             /* Hide Roof objects in the project hierarchy to make it more readable */
-            go.hideFlags = HideFlags.HideInHierarchy;
+            // go.hideFlags = HideFlags.HideInHierarchy;
+
+            // Set GameObject as child of parent object
+            go.transform.parent = parent.transform;
 
             // Sum gives us the center point of all way nodes
             Vector3 nodeOrigin = xmlBaseFactory.GetOrigin(building);
@@ -97,7 +106,7 @@ internal class RoofFactory : InfrastructureManager
                 uvs.Add(new Vector2(0.5f, 0.5f));
                 normals.Add(Vector3.up);
 
-                // Calculate vertexes
+                // Calculate vertices
                 Vector3 v1 = (node1 - nodeOrigin);
                 Vector3 v2 = (node2 - nodeOrigin);
                 Vector3 v3 = v1 + new Vector3(0, building.height + 1, 0);

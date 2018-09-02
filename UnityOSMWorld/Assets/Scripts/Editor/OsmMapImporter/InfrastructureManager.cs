@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+
 /// <summary>
 /// Infrastructure base
 /// </summary>

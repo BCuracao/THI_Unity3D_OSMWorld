@@ -13,6 +13,8 @@ internal class BuildingFactory : InfrastructureManager
     /// </summary>
     private Material buildingMat;
 
+    GameObject parent = new GameObject();
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -22,6 +24,7 @@ internal class BuildingFactory : InfrastructureManager
     {
         buildingMat = buildingMaterial;
         CreateBuildings();
+        parent.name = "Buildings";
     }
 
     /// <summary>
@@ -63,6 +66,9 @@ internal class BuildingFactory : InfrastructureManager
 
             // Set building name
             go.name = building.name;
+
+            // Set GameObject as child of parent object
+            go.transform.parent = parent.transform;
 
             // set building mat
             mr.material = buildingMat;

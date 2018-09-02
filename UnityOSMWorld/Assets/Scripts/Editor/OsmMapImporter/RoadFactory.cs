@@ -19,6 +19,11 @@ internal class RoadFactory : InfrastructureManager {
 	private Material footway;
 
     /// <summary>
+    /// Parent GameObject
+    /// </summary>
+    GameObject parent = new GameObject();
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="xmlBaseFactory">Instance of XmlBaseFactory</param>
@@ -29,6 +34,7 @@ internal class RoadFactory : InfrastructureManager {
         road = roadMaterial;
         footway = footwayMaterial;
         CreateRoads();
+        parent.name = "Roads";
     }
 	
     // Generates the lane width of a road
@@ -37,7 +43,7 @@ internal class RoadFactory : InfrastructureManager {
 		Vector2 p = new Vector2(-v.y, v.x).normalized * length;
 		return v1 + p;
 	}
-    // Generates the lane width of a road
+    // Ignores the Y-coordinate of the vertex and passes it on to the first Perpendicular function as Vector2
     private static Vector3 Perpendicular(Vector3 v1, Vector3 v2, float length) {
 		Vector2 v = Perpendicular(
 			new Vector2(v1.x, v1.z),
@@ -46,14 +52,16 @@ internal class RoadFactory : InfrastructureManager {
 		);
 		return new Vector3(v.x, (v1.y + v2.y) / 2f, v.y);
 	}
-    // Calculates the vertices of the connected stree sections in order make them fit together
+    // Calculates the new vertices of the connected street sections.
+    // If they intersect it returns the intersection point. Otherweise it extends the lines until they intersect and returns that point.
 	private static Vector2 Intersection(Vector2 A1, Vector2 A2, Vector2 B1, Vector2 B2) {
 		float d = (B2.x - B1.x) * (A2.y - A1.y) - (B2.y - B1.y) * (A2.x - A1.x);
 		if (Mathf.Abs(d) < 1f) return A2 * 0.5f + B2 * 0.5f;
 		float m = ((A1.x - B1.x) * (A2.y - A1.y) - (A1.y - B1.y) * (A2.x - A1.x)) / d;
 		return new Vector2(B1.x + (B2.x - B1.x) * m, B1.y + (B2.y - B1.y) * m);
 	}
-    // Calculates the vertices of the connected stree sections in order make them fit together
+    // Calculates the vertices of the connected street sections in order make them fit together
+    // Ignores the Y-coordinate because roads are in 2d and parses the Vector2 to the first intersection function
     private static Vector3 Intersection(Vector3 A1, Vector3 A2, Vector3 B1, Vector3 B2) {
 		Vector2 v = Intersection(
 			new Vector2(A1.x, A1.z),
@@ -294,7 +302,9 @@ internal class RoadFactory : InfrastructureManager {
 				mf.mesh.uv = uvs.ToArray();
 
                 /* Hide Road objects in the project hierarchy to make it more readable */
-                go.hideFlags = HideFlags.HideInHierarchy;
+                // go.hideFlags = HideFlags.HideInHierarchy;
+
+                go.transform.parent = parent.transform;
 
                 // Add triangles & materials
                 if (triangles0.Count == 0) {
@@ -351,8 +361,8 @@ internal class RoadFactory : InfrastructureManager {
 
 	public void CreateRoads()
     {
-        /* Enable this to generate Highways and Footways and stitched together at intersections.
-         * Meaning this will connect the footways and roads if they intersec */
+        /* Enable this to generate Highways and Footways and stitch them together at intersections.
+         * Meaning this will connect the footways and roads if they intersect */
 		//StitchWays(xmlBaseFactory.allWayNodes.FindAll((s) => { return (s.isHighway || s.isFootway) && s.ndref.Count > 1; }));
 
 		/* Enable this to generate Highways only */
