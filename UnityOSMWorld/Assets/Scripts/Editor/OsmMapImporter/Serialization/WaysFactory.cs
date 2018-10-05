@@ -69,7 +69,7 @@ public class WaysFactory : AttributeFactory
         ndref = new List<ulong>();
 
         // Default height if no height available
-        height = 12f;
+        height = 15f;
 
         // Default name if no name available
         name = "noData";
@@ -93,12 +93,12 @@ public class WaysFactory : AttributeFactory
             }
             else if (k == "height")
             {
-                height = GetWayAttributes<float>("v", n.Attributes);
+                height = 4.0f * GetWayAttributes<float>("v", n.Attributes);
             }
-            if (k == "building:levels")
-            {
-                height = 4.0f * GetAttributes<float>("v", n.Attributes);
-            }
+            //if (k == "building:levels")
+            //{
+            //    height = 8.0f * GetAttributes<float>("v", n.Attributes);
+            //}
             else if (k == "name")
             {
                 name = GetAttributes<string>("v", n.Attributes);

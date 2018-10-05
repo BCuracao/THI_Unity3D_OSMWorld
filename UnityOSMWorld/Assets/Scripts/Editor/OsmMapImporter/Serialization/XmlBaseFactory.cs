@@ -2,6 +2,7 @@
 using System.Xml;
 using UnityEngine;
 using System.IO;
+using System;
 
 /// <summary>
 /// OSM file reader
@@ -45,7 +46,6 @@ internal sealed class XmlBaseFactory
         GetBounds(xmldoc.SelectSingleNode("/osm/bounds"));
         GetNodes(xmldoc.SelectNodes("/osm/node"));
         GetWays(xmldoc.SelectNodes("/osm/way"));
-
     }
 
     // Passes all ways to retrieve a list of all way objects

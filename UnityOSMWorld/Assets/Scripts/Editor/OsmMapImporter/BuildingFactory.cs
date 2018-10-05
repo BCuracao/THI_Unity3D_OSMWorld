@@ -99,6 +99,7 @@ internal class BuildingFactory : InfrastructureManager
                 // Use x and y coordinates of both nodes to
                 Vector3 v1 = (node1 - nodeOrigin);
                 Vector3 v2 = (node2 - nodeOrigin);
+
                 Vector3 v3 = v1 + new Vector3(0, building.height, 0);
                 Vector3 v4 = v2 + new Vector3(0, building.height, 0);
 
@@ -106,6 +107,10 @@ internal class BuildingFactory : InfrastructureManager
                 vertices.Add(v2);
                 vertices.Add(v3);
                 vertices.Add(v4);
+
+                Color c = Color.red;
+                Debug.DrawLine(v1, v2, c);
+                
 
                 // Points to form the triangles needed for the plane
                 int p1 = vertices.Count - 4;

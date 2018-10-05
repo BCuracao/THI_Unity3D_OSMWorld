@@ -23,11 +23,23 @@ public class AttributeFactory
 
         // True if attribute contains letters
         bool containsLetter = attribute.Any(x => char.IsLetter(x));
+        bool containsFeetAndInches = attribute.Contains("'");
+        bool containsSemicolon = attribute.Contains(";");
+        bool containsSignedNumber = attribute.Contains("-");
+
         if (containsLetter)
         {
             // If attribute contains letters remove them
             attribute = Regex.Replace(attribute, "[A-Za-z ]", "");
             attribute.Trim();
+            if(attribute.Equals(null))
+            {
+                return (T)Convert.ChangeType(0, typeof(float));
+            }
+        }
+        if (containsFeetAndInches || containsSemicolon || containsSignedNumber)
+        {
+            return (T)Convert.ChangeType(0, typeof(float));
         }
 
         return (T)Convert.ChangeType(attribute, typeof(T));
